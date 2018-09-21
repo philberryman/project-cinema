@@ -1,11 +1,15 @@
 let favourites = JSON.parse(localStorage.getItem('favourites'));
-console.log(favourites);
+// console.log(favourites);
 
 const container = document.querySelector('.app');
 container.addEventListener('click', event => {
     if (event.target.matches('.movies__fav-icon')) {
         toggleFavourite(event.target.id, event.target.parentElement.id);
-    }});
+    }
+    if (event.target.parentNode.matches('.result')) {
+        showMovie(event.target.parentNode.id)
+    }
+});
 
 const createUrl = (typeOfSearch, search) => {
     const baseURL = "http://www.omdbapi.com/";
@@ -13,28 +17,50 @@ const createUrl = (typeOfSearch, search) => {
     return `${baseURL}?apikey=${apiKey}&${typeOfSearch}=${search}`
 }
 
-exports.createUrl = createUrl;
 
-
-const getFilm = ((typeOfSearch="s", search) => {
-    var url = `http://www.omdbapi.com/?apikey=95869d44&t=${search}`;
-        fetch(createUrl(typeOfSearch,search))
+const apiRequest = (typeOfSearch="s", search) => {
+    return fetch(createUrl(typeOfSearch,search))
             .then(function (response) {
                 return response.json();
             })
-            .then(function (body) {
-                console.log(body);
-                showFilm(body);
-            })
-        })
+        }
 
-// looks for all elements with class .movie__info and sets innerText to the info related to their id
-const showFilm = (film) => {
-    let favourite= '';
-    const movieSpans = document.querySelectorAll('.movie__info')
-    movieSpans.forEach( item => {
-        item.innerText = film[item.id]
-    })    
+
+// template for search results
+const searchTemplate = (result) => {
+    return `
+    <div class="result" id="${result.Title}">
+        <div class="result__title">${result.Title}</div>
+        <div class="result__year">${result.Year}</div>
+        <div class="result__poster">${result.Poster}</div>
+    </div>`
+};
+
+// inserts html into .search div - not Pure (altering dom)
+const renderMovieResults = resultsHtml => {
+    const resultsDiv = document.querySelector('.results');
+    resultsDiv.innerHTML = resultsHtml;
+}
+
+// takes search query / uses apiRequest to fetch results. Maps through and returns html
+const createSearchHtml = (search) => {
+    return apiRequest('s',search).then(function (body){
+        const apiResults = body.Search;
+        const resultsHtml = apiResults.map((result) => {
+        return searchTemplate(result)
+        }).join("");
+        renderMovieResults(resultsHtml);
+    });
+}
+
+const createMovieHtml = (id) => {
+    return apiRequest('t',id).then(function (body){
+        console.log(body);
+    });
+}
+
+const showMovie = (id) => {
+    createMovieHtml(id);
 }
 
 const toggleFavourite = (filmID,filmTitle) => {
@@ -58,6 +84,4 @@ const toggleFavourite = (filmID,filmTitle) => {
     console.log(updatedFavourites);
 }
 
-const filmTemplate = (filmTitle, filmID) => `${filmTitle}  <span class="movies__fav-icon" id="${filmID}">F</span`;
-
-getFilm('t','pulp');
+createSearchHtml('pulp')
