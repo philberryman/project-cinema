@@ -8,10 +8,17 @@ const createListeners = () => {
         if (event.target.matches('.movies__fav-icon')) {
             toggleFavourite(event.target.id, event.target.parentElement.id);
         }
-        if (event.target.parentNode.matches('.result')) {
-            showMovie(event.target.parentNode.id)
+        if (event.target.closest('.result')) {
+            showMovie(event.target.closest('.result').id)
         }
     });
+	const formElement = document.querySelector("form");
+	const formInput = document.querySelector("#form-search");
+	formElement.addEventListener('submit', event => {
+		event.preventDefault();
+		search = formInput.value;
+		searchMovies(search);
+	});
 }
 
 // builds the url for omdb api request
@@ -42,15 +49,19 @@ const renderMovieResults = resultsHtml => {
 const searchTemplate = (result) => {
     return `
     <div class="result" id="${result.Title}">
-        <div class="result__title">${result.Title}</div>
-        <div class="result__year">${result.Year}</div>
-        <div class="result__poster">${result.Poster}</div>
+        <div class="result__poster">
+            <img src="${result.Poster}" class="cover">
+        </div>
+        <div class="result__info">
+            <div class="result__title">${result.Title}</div>
+            <div class="result__year">${result.Year}</div>
+        </div>
     </div>`
 };
 
 
 // takes search query / uses apiRequest to fetch results. Maps through and returns html
-const createSearchHtml = (search) => {
+const searchMovies = (search) => {
     return apiRequest('s', search).then(function (body) {
         const apiResults = body.Search;
         const resultsHtml = apiResults.map((result) => {
@@ -109,4 +120,4 @@ const toggleFavourite = (filmID, filmTitle) => {
 }
 
 createListeners();
-createSearchHtml('pulp')
+searchMovies('pulp')
