@@ -1,4 +1,10 @@
 let favourites = JSON.parse(localStorage.getItem('phil'));
+console.log(favourites);
+
+favourites.test = 0
+localStorage.setItem('favourites', JSON.stringify(favourites));
+console.log(favourites);
+
 // console.log(favourites);
 
 // creates all event listeners that are needed
