@@ -65,8 +65,8 @@ const searchTemplate = (result) => {
                 <div class="result__year">${result.Year}</div>
             </div>
             <div class="result__links">
-                <div class="result__more-info">More Info</div>
-                <div class="result__favourite"> <i class="movies__fav-icon ${isFavourite(result.Title)}" id="${result.imdbID}" data-title="${result.Title}"></i></div>
+                <div class="result__more-info result__link">More Info</div>
+                <div class="result__favourite  result__link"> <i class="movies__fav-icon ${isFavourite(result.Title)}" id="${result.imdbID}" data-title="${result.Title}"></i></div>
             </div>
         </div>
     </div>
@@ -77,9 +77,9 @@ const searchTemplate = (result) => {
 const isFavourite = (title) => {
     if (favourites[title]===1) {
         console.log(`${title} is favourite`);
-        return ' fas fa-star'
+        return ' fas fa-star fa-2x'
     };
-    return ' far fa-star'
+    return ' far fa-star fa-2x'
 }
 
 // takes search query / uses apiRequest to fetch results. Maps through and returns html
@@ -104,12 +104,16 @@ const showMovie = (id) => {
 const movieTemplate = (movie) => {
     return `
     <div class="movie__back-to-result"><<< Back to results</div>
-    <div class="movie__title">${movie.Title}</div>
-    <div class="movie__title">${movie.Year}</div>
-    <div class="movie__title">${movie.Title}</div>
-    <div class="movie__title">${movie.Year}</div>
-    <div class="movie__title">${movie.Title}</div>
-    <div class="movie__title">${movie.Year}</div>
+
+    <div class="movie__poster"><img src="${movie.Poster}" class="cover"></div>
+    <div class="movie__info">
+        <div class="movie__title">${movie.Title}</div>
+        <div class="movie__title">${movie.Year}</div>
+        <div class="movie__title">${movie.Title}</div>
+        <div class="movie__title">${movie.Year}</div>
+        <div class="movie__title">${movie.Title}</div>
+        <div class="movie__title">${movie.Year}</div>
+    </div>
     `
 }
 const renderMovie = movieHtml => {
