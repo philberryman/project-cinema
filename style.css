@@ -8,7 +8,7 @@ body {
     font-family: "Open Sans", sans-serif;
     min-height: 100vh;
     background-color: rgb(216, 238, 245);    
-    background: url(/images/cinema-background.jpg);
+    background: url(../images/cinema-background.jpg);
     background-attachment: fixed;
     align-content: center;
   }
