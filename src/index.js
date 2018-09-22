@@ -9,6 +9,8 @@ if (favourites === null) {
 console.log('2 ' + favourites);
 localStorage.setItem('favourites', JSON.stringify(favourites));
 console.log('3 ' + favourites);
+updatedFavourites = JSON.parse(favourites);
+
 
 // console.log(favourites);
 
@@ -146,12 +148,12 @@ const toggleFavourite = (filmID, filmTitle) => {
 
     if (film.classList.contains('fas')) {
         console.log("toggle " + filmTitle);
-        updatedFavourites[filmTitle] = 1;
+        favourites[filmTitle] = 1;
     } else {
-        updatedFavourites[filmTitle] = 0;
+        favourites[filmTitle] = 0;
     }
     // updatedFavourites.filmName = 
-    localStorage.setItem('phil', JSON.stringify(updatedFavourites));
+    localStorage.setItem('phil', JSON.stringify(favourites));
     console.log(updatedFavourites);
 }
 
