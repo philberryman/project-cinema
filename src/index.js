@@ -1,4 +1,4 @@
-let favourites = JSON.parse(localStorage.getItem('favourites'));
+let favourites = JSON.parse(localStorage.getItem('phil'));
 // console.log(favourites);
 
 // creates all event listeners that are needed
@@ -6,11 +6,17 @@ const createListeners = () => {
     const container = document.querySelector('.app');
     container.addEventListener('click', event => {
         if (event.target.matches('.movies__fav-icon')) {
-            toggleFavourite(event.target.id, event.target.parentElement.id);
+            console.log("dsds" + event.target.dataset.title);
+            toggleFavourite(event.target.id, event.target.dataset.title);
         }
-        if (event.target.closest('.result')) {
+        if (event.target.closest('.result__poster, .result__more-info, .result__text')) {
             showMovie(event.target.closest('.result').id)
         }
+        if (event.target.matches('.movie__back-to-result')) {
+            switchDiv('results');
+            console.log(45345)
+        }
+
     });
 	const formElement = document.querySelector("form");
 	const formInput = document.querySelector("#form-search");
@@ -41,6 +47,7 @@ const apiRequest = (typeOfSearch = "s", search) => {
 
 // inserts html into .search div - not Pure (altering dom)
 const renderMovieResults = resultsHtml => {
+    switchDiv("results");
     const resultsDiv = document.querySelector('.results');
     resultsDiv.innerHTML = resultsHtml;
 }
@@ -53,12 +60,27 @@ const searchTemplate = (result) => {
             <img src="${result.Poster}" class="cover">
         </div>
         <div class="result__info">
-            <div class="result__title">${result.Title}</div>
-            <div class="result__year">${result.Year}</div>
+            <div class="result__text">
+                <div class="result__title">${result.Title}</div>
+                <div class="result__year">${result.Year}</div>
+            </div>
+            <div class="result__links">
+                <div class="result__more-info">More Info</div>
+                <div class="result__favourite"> <i class="movies__fav-icon ${isFavourite(result.Title)}" id="${result.imdbID}" data-title="${result.Title}"></i></div>
+            </div>
         </div>
-    </div>`
+    </div>
+   
+    `
 };
 
+const isFavourite = (title) => {
+    if (favourites[title]===1) {
+        console.log(`${title} is favourite`);
+        return ' fas fa-star'
+    };
+    return ' far fa-star'
+}
 
 // takes search query / uses apiRequest to fetch results. Maps through and returns html
 const searchMovies = (search) => {
@@ -81,18 +103,17 @@ const showMovie = (id) => {
 
 const movieTemplate = (movie) => {
     return `
+    <div class="movie__back-to-result"><<< Back to results</div>
     <div class="movie__title">${movie.Title}</div>
     <div class="movie__title">${movie.Year}</div>
-    <div class="movie__title">${movie.Poster}</div>
     <div class="movie__title">${movie.Title}</div>
     <div class="movie__title">${movie.Year}</div>
-    <div class="movie__title">${movie.Poster}</div>
     <div class="movie__title">${movie.Title}</div>
     <div class="movie__title">${movie.Year}</div>
-    <div class="movie__title">${movie.Poster}</div>
     `
 }
 const renderMovie = movieHtml => {
+    switchDiv("movie");
     const movieDiv = document.querySelector('.movie');
     movieDiv.innerHTML = movieHtml;
 }
@@ -100,24 +121,33 @@ const renderMovie = movieHtml => {
 
 const toggleFavourite = (filmID, filmTitle) => {
     console.log(123)
-    // console.log(filmName);
-    let filmA = '#' + filmID;
-    // console.log(filmA);
     const film = document.querySelector(`#${filmID}`);
-    film.classList.toggle('favourited');
+    film.classList.toggle('fas');
+    film.classList.toggle('far');
 
-    var updatedFavourites = JSON.parse(localStorage.getItem('favourites'));
 
-    if (film.classList.contains('favourited')) {
+
+    let updatedFavourites = JSON.parse(localStorage.getItem('phil'));
+
+    if (film.classList.contains('fas')) {
         console.log("toggle " + filmTitle);
         updatedFavourites[filmTitle] = 1;
     } else {
         updatedFavourites[filmTitle] = 0;
     }
     // updatedFavourites.filmName = 
-    localStorage.setItem('favourites', JSON.stringify(updatedFavourites));
+    localStorage.setItem('phil', JSON.stringify(updatedFavourites));
     console.log(updatedFavourites);
 }
 
+const switchDiv = (div) => {
+    const nextDiv = document.querySelector('.'+div)
+    const results = document.querySelector('.results');
+    const movie = document.querySelector('.movie');
+    results.style.display = 'none';
+    movie.style.display = 'none';
+
+    nextDiv.style.display = 'flex';
+}
+
 createListeners();
-searchMovies('pulp')
