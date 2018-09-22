@@ -9,8 +9,6 @@ if (favourites === null) {
 console.log('2 ' + favourites);
 localStorage.setItem('favourites', JSON.stringify(favourites));
 console.log('3 ' + favourites);
-updatedFavourites = JSON.parse(favourites);
-
 
 // console.log(favourites);
 
