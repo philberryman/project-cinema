@@ -1,9 +1,14 @@
 let favourites = JSON.parse(localStorage.getItem('phil'));
+console.log('1 ' + favourites);
+
 console.log(favourites);
 
-favourites.test = 0
+if (favourites === null) {
+    favourites = {test:0}
+}
+console.log('2 ' + favourites);
 localStorage.setItem('favourites', JSON.stringify(favourites));
-console.log(favourites);
+console.log('3 ' + favourites);
 
 // console.log(favourites);
 
