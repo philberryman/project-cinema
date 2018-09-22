@@ -18,7 +18,7 @@ const createListeners = () => {
     container.addEventListener('click', event => {
         if (event.target.matches('.movies__fav-icon')) {
             console.log("dsds" + event.target.dataset.title);
-            toggleFavourite(event.target.id, event.target.dataset.title);
+            toggleFavourite(event.target.id, event.target.dataset.id);
         }
         if (event.target.closest('.result__poster, .result__more-info, .result__text')) {
             showMovie(event.target.closest('.result').id)
@@ -77,7 +77,7 @@ const searchTemplate = (result) => {
             </div>
             <div class="result__links">
                 <div class="result__more-info result__link">More Info</div>
-                <div class="result__favourite  result__link"> <i class="movies__fav-icon ${isFavourite(result.Title)}" id="${result.imdbID}" data-title="${result.Title}"></i></div>
+                <div class="result__favourite  result__link"> <i class="movies__fav-icon ${isFavourite(result.imdbID)}" id="${result.imdbID}" data-title="${result.imdbID}"></i></div>
             </div>
         </div>
     </div>
@@ -85,9 +85,9 @@ const searchTemplate = (result) => {
     `
 };
 
-const isFavourite = (title) => {
-    if (favourites[title]===1) {
-        console.log(`${title} is favourite`);
+const isFavourite = (id) => {
+    if (favourites[id]===1) {
+        console.log(`${id} is favourite`);
         return ' fas fa-star fa-2x'
     };
     return ' far fa-star fa-2x'
@@ -146,9 +146,9 @@ const toggleFavourite = (filmID, filmTitle) => {
 
     if (film.classList.contains('fas')) {
         console.log("toggle " + filmTitle);
-        favourites[filmTitle] = 1;
+        favourites[filmID] = 1;
     } else {
-        favourites[filmTitle] = 0;
+        favourites[filmID] = 0;
     }
     // updatedFavourites.filmName = 
     localStorage.setItem('phil', JSON.stringify(favourites));
