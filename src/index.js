@@ -1,14 +1,19 @@
-let favourites = JSON.parse(localStorage.getItem('phil'));
-console.log('1 ' + favourites);
+let user="steve";
 
-console.log(favourites);
+let userObject = JSON.parse(localStorage.getItem(user));
 
-if (favourites === null) {
-    favourites = {test:0}
+function User (user) {
+    this.name = user;
+    this.favourites = {};
+    this.toWatch = {};
 }
-console.log('2 ' + favourites);
-localStorage.setItem('favourites', JSON.stringify(favourites));
-console.log('3 ' + favourites);
+
+if (userObject === null) {
+    userObject = new User(user);
+}
+console.log(userObject);
+
+// localStorage.setItem('favourites', JSON.stringify(favourites));
 
 // console.log(favourites);
 
@@ -42,6 +47,7 @@ const createListeners = () => {
 const createUrl = (typeOfSearch, search) => {
     const baseURL = "http://www.omdbapi.com/";
     const apiKey = "95869d44";
+    console.log(`${baseURL}?apikey=${apiKey}&${typeOfSearch}=${search}`)
     return `${baseURL}?apikey=${apiKey}&${typeOfSearch}=${search}`
 }
 
@@ -86,10 +92,12 @@ const searchTemplate = (result) => {
 };
 
 const isFavourite = (id) => {
-    if (favourites[id]===1) {
-        console.log(`${id} is favourite`);
-        return ' fas fa-star fa-2x'
-    };
+    if (userObject.favourites.hasOwnProperty(id)) {
+        if (userObject.favourites[id].favourite===1) {
+            console.log(`${id} is favourite`);
+            return ' fas fa-star fa-2x'
+        };
+    }
     return ' far fa-star fa-2x'
 }
 
@@ -133,6 +141,12 @@ const renderMovie = movieHtml => {
     movieDiv.innerHTML = movieHtml;
 }
 
+function Movie (body) {
+    this.id = body.imdbID;
+    this.title = body.Title;
+    this.favourite =1;
+    console.log(body);
+}
 
 const toggleFavourite = (filmID, filmTitle) => {
     console.log(123)
@@ -140,19 +154,25 @@ const toggleFavourite = (filmID, filmTitle) => {
     film.classList.toggle('fas');
     film.classList.toggle('far');
 
-
-
-    let updatedFavourites = JSON.parse(localStorage.getItem('phil'));
-
     if (film.classList.contains('fas')) {
-        console.log("toggle " + filmTitle);
-        favourites[filmID] = 1;
+        if (!userObject.hasOwnProperty(filmID)) {
+            return apiRequest('i', filmID).then(function (body) {
+                console.log('this');
+                userObject.favourites[filmID] = new Movie(body);
+                console.log(body);
+                console.log(userObject);
+                localStorage.setItem(user, JSON.stringify(userObject));
+            });            
+        }
+        userObject.favourites[filmID].favourite = 1;
     } else {
-        favourites[filmID] = 0;
+        userObject.favourites[filmID].favourite = 0;
     }
     // updatedFavourites.filmName = 
-    localStorage.setItem('phil', JSON.stringify(favourites));
-    console.log(updatedFavourites);
+    console.log(userObject);
+
+    localStorage.setItem(user, JSON.stringify(userObject));
+    console.log(userObject);
 }
 
 const switchDiv = (div) => {
