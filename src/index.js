@@ -1,4 +1,4 @@
-let user="steve";
+let user="alison";
 
 let userObject = JSON.parse(localStorage.getItem(user));
 
@@ -31,6 +31,10 @@ const createListeners = () => {
         if (event.target.matches('.movie__back-to-result')) {
             switchDiv('results');
             console.log(45345)
+        }
+        if (event.target.matches('.nav__favourites')) {
+            switchDiv('favourites');
+            showFavourites();
         }
 
     });
@@ -72,7 +76,7 @@ const renderMovieResults = resultsHtml => {
 // template for search results
 const searchTemplate = (result) => {
     return `
-    <div class="result" id="${result.Title}">
+    <div class="result" id="${result.imdbID}">
         <div class="result__poster">
             <img src="${result.Poster}" class="cover">
         </div>
@@ -83,7 +87,7 @@ const searchTemplate = (result) => {
             </div>
             <div class="result__links">
                 <div class="result__more-info result__link">More Info</div>
-                <div class="result__favourite  result__link"> <i class="movies__fav-icon ${isFavourite(result.imdbID)}" id="${result.imdbID}" data-title="${result.imdbID}"></i></div>
+                <div class="result__favourite  result__link"> <i class="movies__fav-icon ${isFavourite(result.imdbID)}" id="${result.imdbID}" data-fav-id="${result.imdbID}"></i></div>
             </div>
         </div>
     </div>
@@ -115,12 +119,13 @@ const searchMovies = (search) => {
 // MOVIE FUNCTIONS :: 
 //These 3 functions get a movie from the API and render it.
 const showMovie = (id) => {
-    return apiRequest('t', id).then(function (body) {
+    return apiRequest('i', id).then(function (body) {
         renderMovie(movieTemplate(body));
     });
 }
 
 const movieTemplate = (movie) => {
+    console.log(movie)
     return `
     <div class="movie__back-to-result"><<< Back to results</div>
 
@@ -144,18 +149,31 @@ const renderMovie = movieHtml => {
 function Movie (body) {
     this.id = body.imdbID;
     this.title = body.Title;
+    this.actors = body.Actors;
+    this.awards = body.Awards;
+    this.boxOffice = body.BoxOffice;
+    this.country = body.Country;
+    this.language = body.Language;
+    this.plot = body.Plot;
+    this.poster = body.Poster;
+    this.rated = body.Rated;
+    this.runtime = body.Runtime;
+    this.type = body.Type;
+    this.year = body.Year;
+    this.rating = body.imdbRating;
+    this.writer = body.Wtier;
     this.favourite =1;
     console.log(body);
 }
 
 const toggleFavourite = (filmID, filmTitle) => {
-    console.log(123)
-    const film = document.querySelector(`#${filmID}`);
+    console.log(filmID)
+    const film = document.querySelector(`[data-fav-id=${filmID}]`);
     film.classList.toggle('fas');
     film.classList.toggle('far');
 
     if (film.classList.contains('fas')) {
-        if (!userObject.hasOwnProperty(filmID)) {
+        if (!userObject.favourites.hasOwnProperty(filmID)) {
             return apiRequest('i', filmID).then(function (body) {
                 console.log('this');
                 userObject.favourites[filmID] = new Movie(body);
@@ -167,6 +185,10 @@ const toggleFavourite = (filmID, filmTitle) => {
         userObject.favourites[filmID].favourite = 1;
     } else {
         userObject.favourites[filmID].favourite = 0;
+        console.log(userObject.favourites[filmID].favourite)
+        console.log(userObject.favourites[filmID])
+
+        console.log("remove facourite")
     }
     // updatedFavourites.filmName = 
     console.log(userObject);
@@ -179,10 +201,39 @@ const switchDiv = (div) => {
     const nextDiv = document.querySelector('.'+div)
     const results = document.querySelector('.results');
     const movie = document.querySelector('.movie');
+    const favourites = document.querySelector('.favourites');
     results.style.display = 'none';
     movie.style.display = 'none';
+    favourites.style.display = 'none';
 
     nextDiv.style.display = 'flex';
+}
+
+
+const favouritesTemplate = movie => {
+    return `
+    <div class="favourites__movie">${movie.title}</div>   
+    `
+}
+
+
+const showFavourites = () => {
+    const favouriteKeys = Object.keys(userObject.favourites);
+    const favouritesArray = favouriteKeys.map(movie => {
+        return userObject.favourites[movie];
+    })
+    console.log(favouritesArray);
+    const favouritesFiltered = favouritesArray.filter(movie => movie.favourite===1);
+    const favouritesHTML = favouritesFiltered.map(movie => {
+        return favouritesTemplate(movie)
+    }).join("")
+    renderFavourites(favouritesHTML);
+}
+
+const renderFavourites = html => {
+    switchDiv("favourites");
+    const favouritesDiv = document.querySelector('.favourites');
+    favouritesDiv.innerHTML = html;
 }
 
 createListeners();

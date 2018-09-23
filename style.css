@@ -182,7 +182,7 @@ padding: 1px;
       justify-content: center;
   }
 
-  .movie__info {
+  .movie__info .favourites__movie{
     display:flex;
     flex-direction:column;
     width:100%;
@@ -215,4 +215,28 @@ padding: 1px;
   .cover {
       width: 100%;
       object-fit: cover;
+  }
+
+ .favourites__movie{
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    font-family: Roboto Slab;
+    font-style: normal;
+    font-weight: normal;
+    line-height: normal;
+    font-size: 1em;
+    text-align: left;  
+    color: #FFFFFF;
+    background: rgba(20, 45, 108, 0.68);
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border: 2px solid #FFFFFF;
+    box-sizing: border-box;
+    padding:5px;
+    margin: 10px 0 0 0;
+  }
+
+  .favourites {
+      display:flex;
+      flex-direction:column;
   }
